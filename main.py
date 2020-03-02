@@ -46,6 +46,14 @@ def speed_text(speed):
     text = font.render('Speed: ' + str(int(float(str(speed)[0:4]) * 100)), 1, (250, 250, 0))
     screen.blit(text, (60, 60))
 
+def surak(n):
+    font = pygame.font.Font(None, 20)
+    if n == 0:
+        pass
+    elif n == 1:
+        text = font.render('Антоним к слову "Күшті"', 1, (250, 250, 0))
+        screen.blit(text, (400, 60))
+
 #all aprites
 
 back = load_image('background.png', (255, 255, 255))
@@ -112,7 +120,7 @@ velo = 0.8
 
 clock = pygame.time.Clock()
 
-n_su = 1
+n_su = 0
 
 score = 0
 
@@ -154,6 +162,8 @@ while running:
 
     if is_col(eny, player) or is_col(eny2, player) or is_col(player, eny2):
         velo = 0
+        n_su = 1
+
 
 
     # update anau mnau
@@ -163,6 +173,7 @@ while running:
     eny2.render(x_of_enemy2, y_of_enemy2)
     score_text(score)
     speed_text(velo)
+    surak(n_su)
 
     pygame.display.flip()
 print(score)
