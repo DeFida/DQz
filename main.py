@@ -4,11 +4,15 @@ import random
 import math
 
 #pygame window init.
-
+recor = open('data/records.txt', mode="r", encoding="utf8")
+lines = recor.readlines()
+rec = int(lines[0])
+print(rec)
 pygame.init()
 size = width, height = 600, 400
 screen = pygame.display.set_mode(size)
 running = True
+run = True
 pygame.display.set_caption('Angry py')
 
 #functions
@@ -46,18 +50,52 @@ def speed_text(speed):
     text = font.render('Speed: ' + str(int(float(str(speed)[0:4]) * 100)), 1, (250, 250, 0))
     screen.blit(text, (60, 60))
 
+def rec_text(rec, sc):
+    reco = rec
+    font = pygame.font.Font(None, 30)
+    if sc < rec:
+        text = font.render('Record: ' + str(reco), 1, (250, 250, 0))
+    else:
+        text = font.render('Record: ' + str(int(sc)), 1, (250, 250, 0))
+    screen.blit(text, (60, 90))
+
 def surak(n):
     font = pygame.font.Font(None, 20)
     if n == 0:
         pass
     elif n == 1:
-        text = font.render('Антоним к слову "Күшті"', 1, (250, 250, 0))
-        screen.blit(text, (400, 60))
+        text = font.render('Антоним к слову: Керемет', 1, (250, 250, 0))
+        text2 = font.render('a) Нашар', 1, (250, 250, 0))
+        text3 = font.render('b) Ғажап', 1, (250, 250, 0))
+        screen.blit(text, (380, 50))
+        screen.blit(text2, (380, 80))
+        screen.blit(text3, (380, 110))
 
+    elif n == 2:
+        text = font.render('Синоним к слову: Мәлімет', 1, (250, 250, 0))
+        text2 = font.render('b) Мағлұмат', 1, (250, 250, 0))
+        text3 = font.render('a) Термин', 1, (250, 250, 0))
+        screen.blit(text, (380, 50))
+        screen.blit(text2, (380, 110))
+        screen.blit(text3, (380, 80))
+
+
+def zhauap(k):
+    y = True
+    if n_su == 1:
+        if k == 1:
+            y = True
+        else:
+            y = False
+    elif n_su == 2:
+        if k == 2:
+            y = True
+        else:
+            y = False
+    return y 
 #all aprites
 
 back = load_image('background.png', (255, 255, 255))
-
 
 #pos of enemy
 poses = [235, 280, 325, 300, 295, 260, 270]
@@ -90,7 +128,6 @@ class enemy2():
     def get_chara(self):
         return (self.x, self.y + 30, self.x + 30, self.y + 30)
 
-
 class pyPlayer():
     def __init__(self):
         self.x = 280
@@ -104,7 +141,6 @@ class pyPlayer():
 
     def get_chara(self):
         return (self.x, self.y, self.x + 20, self.y + 20)
-
 
 player = pyPlayer()
 eny = enemy()
@@ -122,10 +158,15 @@ clock = pygame.time.Clock()
 
 n_su = 0
 
+bs = 1
+es = 2
+us = 3
+
 score = 0
 
 x = 280
 y = 330
+
 while running:
     screen.fill((196, 223, 229, 255))
     for event in pygame.event.get():
@@ -133,38 +174,65 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             pass
+    
     pressed = pygame.key.get_pressed()
     if pressed[pygame.K_RIGHT]:
-        x += velo * 0.4
+        x += velo * 0.5
     if pressed[pygame.K_LEFT]:
-        x -= velo * 0.4
+        x -= velo * 0.5
+    if pressed[pygame.K_p]:
+        run = False
+    if pressed[pygame.K_s]:
+        run = True
+    if pressed[pygame.K_a]:
+        if zhauap(1):
+            run = True
+            velo = 0.8
+            y_of_enemy = 0
+            y_of_enemy2 = -600
+            n_su = 0
+        else:
+            if rec < score:
+                wrecor = open('data/records.txt', mode="w", encoding="utf8")
+                wrecor.write(str(int(score)))
 
-    velo += clock.tick() / 80500
-    score += velo * 0.1
+    if pressed[pygame.K_b]:
+        if zhauap(2):
+            velo = 0.8
+            y_of_enemy = 0
+            y_of_enemy2 = -600
+            n_su = 0
+        else:
+            if rec < score:
+                wrecor = open('data/records.txt', mode="w", encoding="utf8")
+                wrecor.write(str(int(score)))
+    
+    if run:
+        velo += clock.tick() / 50500
+        score += velo * 0.1
 
-    y_of_enemy += velo
-    y_of_enemy2 += velo
+        y_of_enemy += velo
+        y_of_enemy2 += velo
 
-    if y_of_enemy >= 400:
-        y_of_enemy = 0
-        x_of_enemy = random.choice(poses)
-    x_of_enemy = x_of_enemy
+        if y_of_enemy >= 400:
+            y_of_enemy = 0
+            x_of_enemy = random.choice(poses)
+        x_of_enemy = x_of_enemy
 
-    if y_of_enemy2 >= 400:
-        y_of_enemy2 = 0
-        x_of_enemy2 = random.choice(poses)
-    x_of_enemy2 = x_of_enemy2
+        if y_of_enemy2 >= 400:
+            y_of_enemy2 = 0
+            x_of_enemy2 = random.choice(poses)
+        x_of_enemy2 = x_of_enemy2
 
-    if x <= 232:
-        x = 232
-    elif x >= 338:
-        x = 338
+        if x <= 232:
+            x = 232
+        elif x >= 338:
+            x = 338
 
-    if is_col(eny, player) or is_col(eny2, player) or is_col(player, eny2):
-        velo = 0
-        n_su = 1
-
-
+        if is_col(eny, player) or is_col(eny2, player) or is_col(player, eny2):
+            velo = 0
+            n_su = random.randint(1, 2)
+            run = False
 
     # update anau mnau
     screen.blit(back, (0, 0))
@@ -173,6 +241,7 @@ while running:
     eny2.render(x_of_enemy2, y_of_enemy2)
     score_text(score)
     speed_text(velo)
+    rec_text(rec, score)
     surak(n_su)
 
     pygame.display.flip()
